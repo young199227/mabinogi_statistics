@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class connect extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['ip', 'type'];
+
+    public function createConnect(string $ip): Model
+    {
+        return connect::create([
+            'ip' => $ip,
+            'type' => 1,
+        ]);
+    }
 }

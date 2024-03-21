@@ -2,39 +2,42 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\connect;
 use App\Models\statistics;
+use App\Services\StatisticsServices;
 use Illuminate\Http\Request;
 
 class StatisticsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    private Statistics $statistics;
+    private Connect $connect;
+    private StatisticsServices $statisticsServices;
+
+    public function __construct(Statistics $statistics, Connect $connect, StatisticsServices $statisticsServices)
     {
-        //
+        $this->statistics = $statistics;
+        $this->connect = $connect;
+        $this->statisticsServices = $statisticsServices;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    #首頁
+    public function showIndex(Request $request)
+    {
+        #先記錄一次進站IP與時間
+        $this->connect->createConnect($request->ip());
+
+        #拿首頁資料
+        $indexData = $this->statisticsServices->getIndexData();
+
+        return response()->json(['data' => $indexData, 'message' => '首頁!'], 200);
+    }
+
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(statistics $statistics)
     {
         //
     }

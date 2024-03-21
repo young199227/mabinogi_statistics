@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('count');
             $table->integer('decay');
             $table->string('image', 100);
-            $table->integer('type');
+            $table->integer('type')->default(0);
             $table->string('ip', 100);
             $table->timestamps();
         });

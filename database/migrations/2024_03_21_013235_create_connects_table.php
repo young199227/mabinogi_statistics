@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('connects', function (Blueprint $table) {
             $table->id();
             $table->string('ip', 100);
-            $table->integer('type');
+            $table->integer('type')->default(0);
             $table->timestamps();
         });
     }
