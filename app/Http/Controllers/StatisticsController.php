@@ -7,6 +7,7 @@ use App\Models\statistics;
 use App\Services\StatisticsServices;
 use App\Services\RedisServices;
 use Illuminate\Http\Request;
+use App\Http\Requests\StatisticsRequest;
 
 class StatisticsController extends Controller
 {
@@ -26,7 +27,6 @@ class StatisticsController extends Controller
     #測試用
     public function test(Request $request)
     {
-        
     }
 
     #首頁
@@ -41,9 +41,22 @@ class StatisticsController extends Controller
         return response()->json(['data' => $indexData, 'message' => '首頁!'], 200);
     }
 
-    public function create()
+    #使用者上傳
+    public function create(StatisticsRequest $request)
+    {   
+        #新增使用者上傳 回傳成功或失敗
+        $is_create = $this->statisticsServices->create($request);
+
+        if (!$is_create) {
+            return response()->json(['message' => '新增失敗'], 500);
+        }
+        return response()->json(['message' => '新增成功'], 201);
+    }
+
+    #撈沒驗證的上傳資料
+    public function getUnverifiedUploads()
     {
-        //
+        return $this->statistics->getUnverifiedUploads();
     }
 
     /**

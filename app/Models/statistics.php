@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+
 
 class statistics extends Model
 {
@@ -38,6 +40,27 @@ class statistics extends Model
             ->get();
     }
 
+    public function getUnverifiedUploads()
+    {
+        return Statistics::select('name', 'count', 'decay', DB::raw("CONCAT('" . env('HOST_DNS') . "', image) AS image"), 'ip', 'updated_at')
+            ->where('type', 0)
+            ->get();
+    }
+
+    public function createStatistics(object $request, string $imgName)
+    {
+        return Statistics::create([
+            'name' => $request->name,
+            'count' => $request->count,
+            'decay' => $request->decay,
+            'image' => '/storage/images/' . $imgName,
+            'type' => 0,
+            'ip' => $request->ip(),
+        ]);
+    }
+
+
+    #下列2個應該用不到但先放著
     public function getMaxCountUser()
     {
         return Statistics::select('name')
