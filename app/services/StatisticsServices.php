@@ -31,8 +31,8 @@ class StatisticsServices
             $imgPath = $img->store('/public/images');
             $imgName = basename($imgPath);
 
-            #新增上傳資料&回傳結果
-            return $this->statistics->createStatistics($request, $imgName);
+            #新增
+            $this->statistics->createStatistics($request, $imgName);
 
         } catch (\Exception $e) {
             return response()->json(['message' => '新增失敗,圖片儲存問題'], 500);

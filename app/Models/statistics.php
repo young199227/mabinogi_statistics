@@ -13,11 +13,6 @@ class statistics extends Model
 
     protected $fillable = ['name', 'count', 'decay', 'image', 'type', 'ip'];
 
-    public function showIndex()
-    {
-        return statistics::all();
-    }
-
     public function getCountData()
     {
         return statistics::selectRaw('COUNT(id) as user')
@@ -40,13 +35,6 @@ class statistics extends Model
             ->get();
     }
 
-    public function getUnverifiedUploads()
-    {
-        return Statistics::select('name', 'count', 'decay', DB::raw("CONCAT('" . env('HOST_DNS') . "', image) AS image"), 'ip', 'updated_at')
-            ->where('type', 0)
-            ->get();
-    }
-
     public function createStatistics(object $request, string $imgName)
     {
         return Statistics::create([
@@ -58,6 +46,22 @@ class statistics extends Model
             'ip' => $request->ip(),
         ]);
     }
+
+    #拿未驗證上傳資料
+    public function getUnverifiedUploads()
+    {
+        return Statistics::select('name', 'count', 'decay', DB::raw("CONCAT('" . env('HOST_DNS') . "', image) AS image"), 'ip', 'updated_at')
+            ->where('type', 0)
+            ->get();
+    }
+
+    #驗證上傳資料
+    public function verifyUserUploads(string $id, string $type)
+    {
+        return Statistics::where('id', $id)
+            ->update(['type' => $type]);
+    }
+
 
 
     #下列2個應該用不到但先放著

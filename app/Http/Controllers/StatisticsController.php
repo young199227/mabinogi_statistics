@@ -8,6 +8,9 @@ use App\Services\StatisticsServices;
 use App\Services\RedisServices;
 use Illuminate\Http\Request;
 use App\Http\Requests\StatisticsRequest;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Cache;
+
 
 class StatisticsController extends Controller
 {
@@ -41,15 +44,20 @@ class StatisticsController extends Controller
         return response()->json(['data' => $indexData, 'message' => '首頁!'], 200);
     }
 
+    #拿csrf_token
+    public function getToken()
+    {
+        $token = Session::token();
+
+        return response()->json(['data' => ['token' => $token], 'message' => 'token!'], 200);
+    }
+
     #使用者上傳
     public function create(StatisticsRequest $request)
-    {   
+    {
         #新增使用者上傳 回傳成功或失敗
-        $is_create = $this->statisticsServices->create($request);
+        $this->statisticsServices->create($request);
 
-        if (!$is_create) {
-            return response()->json(['message' => '新增失敗'], 500);
-        }
         return response()->json(['message' => '新增成功'], 201);
     }
 
@@ -57,6 +65,20 @@ class StatisticsController extends Controller
     public function getUnverifiedUploads()
     {
         return $this->statistics->getUnverifiedUploads();
+    }
+
+    #驗證上傳的資料
+    public function verifyUserUploads(Request $request, string $verifyNumber)
+    {
+        #如果不是1也不是2回傳500
+        if ($verifyNumber != '1' && $verifyNumber != '2') {
+            return response()->json(['message' => '???'], 500);
+        }
+
+        $this->statistics->verifyUserUploads($request->id, $verifyNumber);
+
+        #回傳204無任何內容
+        return response()->noContent();
     }
 
     /**
