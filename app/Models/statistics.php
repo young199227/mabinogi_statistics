@@ -15,7 +15,7 @@ class statistics extends Model
 
     public function getCountData()
     {
-        return statistics::selectRaw('COUNT(id) as user')
+        return statistics::selectRaw('COUNT(id) as user_count')
             ->selectRaw('SUM(count) as sum')
             ->selectRaw('SUM(decay) as sum_decay')
             ->selectRaw('(SUM(decay)/SUM(count))*100 as probability_decay')
@@ -50,7 +50,7 @@ class statistics extends Model
     #拿未驗證上傳資料
     public function getUnverifiedUploads()
     {
-        return Statistics::select('name', 'count', 'decay', DB::raw("CONCAT('" . env('HOST_DNS') . "', image) AS image"), 'ip', 'updated_at')
+        return Statistics::select('id', 'name', 'count', 'decay', DB::raw("CONCAT('" . env('HOST_DNS') . "', image) AS image"), 'ip', 'updated_at')
             ->where('type', 0)
             ->get();
     }
