@@ -71,8 +71,11 @@ class StatisticsController extends Controller
         if ($verifyNumber != '1' && $verifyNumber != '2') {
             return response()->json(['message' => '???'], 500);
         }
-
+        #驗證
         $this->statistics->verifyUserUploads($request->id, $verifyNumber);
+
+        #強制更新Redis的首頁資料
+        $this->redisServices->forceRedisGetIndexData();
 
         #回傳204無任何內容
         return response()->noContent();
