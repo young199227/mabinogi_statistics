@@ -15,17 +15,24 @@ class RedisServices
     }
 
     public function redisGetIndexData()
-    {   
+    {
         #如果indexData不存在 就存入Redis
-        if(!Redis::exists('indexData')){
+        if (!Redis::exists('indexData')) {
             $indexData = $this->statisticsServices->getIndexData();
 
             #轉json存入Redis
             $indexData = json_encode($indexData);
-            Redis::set('indexData',$indexData);
+            Redis::set('indexData', $indexData);
         }
 
         #轉array回傳 因為controller會包成json回傳
         return json_decode(Redis::get('indexData'));
+    }
+
+    public function forceRedisGetIndexData()
+    {
+        $indexData = $this->statisticsServices->getIndexData();
+        $indexData = json_encode($indexData);
+        Redis::set('indexData', $indexData);
     }
 }

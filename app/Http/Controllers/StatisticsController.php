@@ -8,9 +8,6 @@ use App\Services\StatisticsServices;
 use App\Services\RedisServices;
 use Illuminate\Http\Request;
 use App\Http\Requests\StatisticsRequest;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Cache;
-
 
 class StatisticsController extends Controller
 {
@@ -35,21 +32,21 @@ class StatisticsController extends Controller
     #首頁
     public function getIndexData(Request $request)
     {
-        #先記錄一次進站IP與時間
-        $this->connect->createConnect($request->ip());
-
         #Redis拿首頁資料
         $indexData = $this->redisServices->redisGetIndexData();
 
         return response()->json(['data' => $indexData, 'message' => '首頁!'], 200);
     }
 
-    #拿csrf_token
-    public function getToken()
+    #拿token
+    public function getToken(Request $request)
     {
-        $token = Session::token();
+        #記錄IP與時間然後發toke
+        $token = $this->connect->createConnect($request->ip());
 
-        return response()->json(['data' => ['token' => $token], 'message' => 'token!'], 200);
+        return response()->json(['data' => [
+            'token' => $token,
+        ], 'message' => 'token!'], 200);
     }
 
     #使用者上傳
@@ -74,8 +71,11 @@ class StatisticsController extends Controller
         if ($verifyNumber != '1' && $verifyNumber != '2') {
             return response()->json(['message' => '???'], 500);
         }
-
+        #驗證
         $this->statistics->verifyUserUploads($request->id, $verifyNumber);
+
+        #強制更新Redis的首頁資料
+        $this->redisServices->forceRedisGetIndexData();
 
         #回傳204無任何內容
         return response()->noContent();

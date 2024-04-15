@@ -21,6 +21,9 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+
+        #跨域請求中間件
+        \App\Http\Middleware\CorsMiddleware::class,
     ];
 
     /**
@@ -34,10 +37,8 @@ class Kernel extends HttpKernel
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            \App\Http\Middleware\VerifyCsrfToken::class,
+            // \App\Http\Middleware\VerifyCsrfToken::class, #Csrf驗證
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            #跨域請求中間件
-            \App\Http\Middleware\CorsMiddleware::class,
         ],
 
         'api' => [
